@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Codies Curations</title>
+    
+    <!-- External Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Tailwind CSS for rapid UI development -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#FF1493', // Hot pink
+                        'secondary': '#1a1a1a', // Dark gray/black
+                        'accent': '#FF69B4', // Lighter pink
+                        'dark': '#0a0a0a', // Darker black
+                        'light': '#f8f8f8' // Off-white
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'display': ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-secondary text-light h-full">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-dark py-4 shadow-lg">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Codies Curations</h1>
+                        <p class="text-gray-400 text-sm">Design your perfect piercing layout</p>
+                    </div>
+                    <div class="space-x-2">
+                        <button id="download-btn" class="bg-primary hover:bg-accent text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105">
+                            <i class="fas fa-download mr-2"></i>Download
+                        </button>
+                        <button id="clear-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300">
+                            <i class="fas fa-trash-alt mr-2"></i>Clear All
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-grow grid grid-cols-1 lg:grid-cols-4 gap-6 p-4">
+            <!-- Left Sidebar: Jewelry Categories -->
+            <div class="lg:col-span-1 bg-dark rounded-xl shadow-xl p-4 h-[calc(100vh-8rem)] flex flex-col">
+                <!-- Upload Section -->
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold mb-3 text-primary">1. Upload Image</h2>
+                    <label class="flex flex-col items-center px-4 py-6 bg-dark border-2 border-dashed border-gray-600 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-cloud-upload-alt text-3xl text-primary mb-2"></i>
+                        <p class="text-sm text-gray-400 mb-1">Click to upload an image</p>
+                        <p class="text-xs text-gray-500">or drag and drop</p>
+                        <input id="imageLoader" type="file" accept="image/*" class="hidden" />
+                    </label>
+                </div>
+
+                <!-- Image Adjustments (initially hidden) -->
+                <div id="image-adjust-section" class="mb-6 hidden">
+                    <h2 class="text-xl font-semibold mb-3 text-primary">2. Adjust Image</h2>
+                    <div class="space-y-4 p-3 bg-gray-800 rounded-lg">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label for="zoom-slider" class="text-sm font-medium text-gray-300">
+                                    <i class="fas fa-search-plus mr-2"></i>Zoom
+                                </label>
+                                <span id="zoom-value" class="text-xs bg-gray-700 px-2 py-1 rounded">100%</span>
+                            </div>
+                            <input id="zoom-slider" type="range" min="50" max="500" value="100" 
+                                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary">
+                        </div>
+                        <button id="reset-view-btn" class="w-full bg-primary hover:bg-accent text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02]">
+                            <i class="fas fa-sync-alt mr-2"></i>Reset View
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Jewelry Categories -->
+                <div class="flex-grow overflow-hidden flex flex-col">
+                    <h2 class="text-xl font-semibold mb-3 text-primary">3. Select Jewelry</h2>
+                    <div class="flex space-x-2 mb-3 overflow-x-auto pb-2 scrollbar-hide">
+                        <button data-category="all" class="category-btn active px-3 py-1.5 text-sm font-medium rounded-full bg-primary text-white">All</button>
+                        <button data-category="studs" class="category-btn px-3 py-1.5 text-sm font-medium rounded-full bg-gray-700 text-gray-300 hover:bg-gray-600">Studs</button>
+                        <button data-category="hoops" class="category-btn px-3 py-1.5 text-sm font-medium rounded-full bg-gray-700 text-gray-300 hover:bg-gray-600">Hoops</button>
+                        <button data-category="charms" class="category-btn px-3 py-1.5 text-sm font-medium rounded-full bg-gray-700 text-gray-300 hover:bg-gray-600">Charms</button>
+                        <button data-category="chains" class="category-btn px-3 py-1.5 text-sm font-medium rounded-full bg-gray-700 text-gray-300 hover:bg-gray-600">Chains</button>
+                    </div>
+                    
+                    <!-- Search Box -->
+                    <div class="relative mb-3">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" id="jewelry-search" class="w-full bg-gray-800 text-white text-sm rounded-lg pl-10 p-2.5 focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Search jewelry...">
+                    </div>
+                    
+                    <!-- Jewelry Grid -->
+                    <div id="jewelry-palette" class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                        <!-- Jewelry items will be injected here by JS -->
+                        <div class="grid grid-cols-3 gap-3">
+                            <!-- Items will be added here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Canvas Area -->
+            <div class="lg:col-span-3 bg-dark rounded-xl shadow-xl overflow-hidden">
+                <div class="flex justify-between items-center p-3 border-b border-gray-700">
+                    <h2 class="text-xl font-semibold text-primary">4. Design Canvas</h2>
+                    <div class="flex space-x-2">
+                        <button id="zoom-in-btn" class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button id="zoom-out-btn" class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="canvas-container" class="relative w-full h-[calc(100vh-15rem)] bg-gray-900">
+                    <div id="drop-zone" class="absolute inset-0 flex items-center justify-center border-2 border-dashed border-gray-700 m-4 rounded-lg pointer-events-none">
+                        <div class="text-center p-6">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-600 mb-2"></i>
+                            <p class="text-gray-400">Drop your image here</p>
+                        </div>
+                    </div>
+                    <canvas id="canvas" class="absolute inset-0 m-auto"></canvas>
+                </div>
+                
+                <!-- Jewelry Controls (initially hidden) -->
+                <div id="jewelry-controls-section" class="hidden border-t border-gray-700 p-4 bg-gray-800">
+                    <h3 class="text-lg font-medium text-white mb-3">Adjust Selected Jewelry</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label for="size-slider" class="text-sm font-medium text-gray-300">
+                                    <i class="fas fa-arrows-alt-h mr-2"></i>Size
+                                </label>
+                                <span id="size-value" class="text-xs bg-gray-700 px-2 py-1 rounded">100%</span>
+                            </div>
+                            <input id="size-slider" type="range" min="25" max="300" value="100" 
+                                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary">
+                        </div>
+                        
+                        <div id="length-slider-container" class="hidden">
+                            <div class="flex justify-between items-center mb-1">
+                                <label for="length-slider" class="text-sm font-medium text-gray-300">
+                                    <i class="fas fa-arrows-alt-h mr-2"></i>Length
+                                </label>
+                                <span id="length-value" class="text-xs bg-gray-700 px-2 py-1 rounded">100%</span>
+                            </div>
+                            <input id="length-slider" type="range" min="20" max="400" value="100" 
+                                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary">
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label for="rotation-slider" class="text-sm font-medium text-gray-300">
+                                    <i class="fas fa-sync-alt mr-2"></i>Rotation
+                                </label>
+                                <span id="rotation-value" class="text-xs bg-gray-700 px-2 py-1 rounded">0°</span>
+                            </div>
+                            <input id="rotation-slider" type="range" min="0" max="360" value="0" 
+                                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary">
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end space-x-2">
+                        <button id="delete-btn" class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 flex items-center">
+                            <i class="fas fa-trash-alt mr-2"></i>Delete
+                        </button>
+                        <button id="duplicate-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 flex items-center">
+                            <i class="fas fa-copy mr-2"></i>Duplicate
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="bg-dark border-t border-gray-800 py-4">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">&copy; 2024 Codies Curations. All Rights Reserved.</p>
+                    <div class="flex space-x-4 mt-2 md:mt-0">
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fab fa-instagram text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fab fa-pinterest text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fab fa-tiktok text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    </div>
+
+    <!-- External JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
